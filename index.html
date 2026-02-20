@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>精油記憶圖譜 - 導航主頁</title>
+    <title>精油溫習記憶重點 - 導航主頁</title>
     <!-- 引入 Tailwind CSS 讓樣式更美觀 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Google Fonts -->
@@ -11,61 +11,77 @@
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; }
         .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        /* 定義兩種不同顏色的卡片邊框/裝飾 */
+        .border-l-revision { border-left: 4px solid #10b981; } /* 綠色 */
+        .border-l-exam { border-left: 4px solid #f59e0b; } /* 橙色 */
     </style>
 </head>
-<body class="bg-green-50 text-gray-800 min-h-screen flex flex-col">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
     <!-- 頁面標題區 (Header) -->
-    <header class="bg-white shadow-sm sticky top-0 z-10">
+    <header class="bg-white shadow-sm sticky top-0 z-20">
         <div class="max-w-5xl mx-auto px-4 py-6 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-green-700 tracking-tight">
-                    精油記憶圖譜導航
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 tracking-tight">
+                    精油溫習記憶重點導航
                 </h1>
-                <p class="text-sm text-gray-500 mt-1">所有精油、功能、化學成分及植物科屬等記憶圖</p>
+                <p class="text-sm text-gray-500 mt-1">所有精油溫習記憶重點(包括溫習重點及測試題庫)</p>
             </div>
-            <!-- GitHub Icon (裝飾用) -->
-            <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
-            </svg>
+            <!-- Icon -->
+            <div class="p-2 bg-green-50 rounded-full">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+            </div>
         </div>
     </header>
 
     <!-- 主要內容區 -->
-    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full">
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full space-y-12">
         
-        <div class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-green-500 pl-3">
-                章節列表
-            </h2>
-            <p class="text-gray-600 mb-6">請點擊下方卡片進入對應的記憶圖譜頁面。</p>
-        </div>
+        <!-- 第一部分：記憶/溫習模式 -->
+        <section>
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-8 bg-green-500 rounded mr-3"></div>
+                <h2 class="text-xl font-bold text-gray-800">
+                    記憶/溫習模式
+                </h2>
+            </div>
+            <div id="revision-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- JS 自動填充 -->
+            </div>
+        </section>
 
-        <!-- 這裡是用 JavaScript 自動生成的卡片容器 -->
-        <div id="link-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <!-- 內容會由下方的 Script 填充 -->
-        </div>
+        <!-- 第二部分：考試答題模式 -->
+        <section>
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-8 bg-amber-500 rounded mr-3"></div>
+                <h2 class="text-xl font-bold text-gray-800">
+                    考試答題模式
+                </h2>
+            </div>
+            <div id="exam-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- JS 自動填充 -->
+            </div>
+        </section>
 
     </main>
 
     <!-- 頁尾 -->
-    <footer class="bg-white border-t mt-10 py-6">
-        <div class="text-center text-gray-500 text-sm">
-            &copy; 2024 Essential Oils Memory Map. Hosted on GitHub Pages.
+    <footer class="bg-white border-t mt-10 py-8">
+        <div class="text-center text-gray-400 text-sm">
+            &copy; 2024 Essential Oils Memory Map.
         </div>
     </footer>
 
-    <!-- JavaScript 設定區：你要修改連結就在這裡！ -->
+    <!-- JavaScript 設定區 -->
     <script>
         // ==========================================
         // CONFIGURATION 設定區
         // ==========================================
         
-        // 在這裡定義你的頁面。
-        // file: 檔案名稱 (例如 '1.html', 'index1.html')
-        // title: 顯示在卡片上的大標題
-        // desc: 卡片上的小描述
-        const pages = [
+        // 1. 記憶/溫習模式的連結
+        const revisionPages = [
             { 
                 file: 'Quick Reference of Essential Oil Chemical Composition.html', 
                 title: '精油化學成分速查', 
@@ -81,32 +97,68 @@
                 title: '精油記憶卡', 
                 desc: '所有精油全資料記憶卡(包括科屬、化學成分、功能及禁忌等等)' 
             },
-            
         ];
-        // ==========================================
-        // 程式邏輯 (不需要修改)
-        // ==========================================
-        const container = document.getElementById('link-grid');
 
-        pages.forEach(page => {
-            // 檢查檔案連結是否為空，如果是空則不產生連結
-            const linkHtml = `
-                <a href="${page.file}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all duration-300 card-hover group">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded uppercase">File</span>
-                        <svg class="w-5 h-5 text-gray-300 group-hover:text-green-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 group-hover:text-green-600 transition-colors">${page.title}</h3>
-                    <p class="text-gray-500 text-sm mt-2">${page.desc}</p>
-                    <div class="mt-4 text-xs text-gray-400 font-mono bg-gray-50 inline-block px-2 py-1 rounded">
-                        ${page.file}
-                    </div>
-                </a>
-            `;
-            container.innerHTML += linkHtml;
-        });
+        // 2. 考試答題模式的連結 (請在此處填入您的考試檔案名稱)
+        const examPages = [
+            { 
+                file: 'exam_basic.html', // 請修改為您的實際檔案名
+                title: '基礎測驗 (Level 1)', 
+                desc: '測試對精油基本名稱與科屬的認知' 
+            },
+            { 
+                file: 'exam_intermediate.html', // 請修改為您的實際檔案名
+                title: '進階測驗 (Level 2)', 
+                desc: '測試化學成分與功能的對應關係' 
+            },
+            { 
+                file: 'exam_advanced.html', // 請修改為您的實際檔案名
+                title: '高階測驗 (Level 3)', 
+                desc: '全方位禁忌與臨床應用測試' 
+            },
+        ];
+
+        // ==========================================
+        // 程式邏輯 (自動生成卡片)
+        // ==========================================
+        
+        // 通用渲染函數
+        function renderCards(containerId, data, type) {
+            const container = document.getElementById(containerId);
+            const iconColorClass = type === 'exam' ? 'text-amber-500' : 'text-green-500';
+            const hoverTextClass = type === 'exam' ? 'group-hover:text-amber-600' : 'group-hover:text-green-600';
+            const iconBgClass = type === 'exam' ? 'bg-amber-50' : 'bg-green-50';
+
+            data.forEach(page => {
+                const linkHtml = `
+                    <a href="${page.file}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all duration-300 card-hover group relative overflow-hidden">
+                        
+                        <!-- 頂部 Icon 與標題 -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="p-3 rounded-lg ${iconBgClass} ${iconColorClass}">
+                                ${type === 'exam' 
+                                    ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>' 
+                                    : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>'
+                                }
+                            </div>
+                            <!-- 箭頭 Icon -->
+                            <svg class="w-5 h-5 text-gray-300 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-gray-800 ${hoverTextClass} transition-colors mb-2">${page.title}</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed">${page.desc}</p>
+                    </a>
+                `;
+                container.innerHTML += linkHtml;
+            });
+        }
+
+        // 執行渲染
+        renderCards('revision-grid', revisionPages, 'revision');
+        renderCards('exam-grid', examPages, 'exam');
+
     </script>
 </body>
 </html>

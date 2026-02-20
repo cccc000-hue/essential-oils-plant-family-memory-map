@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精油化學成分心智圖</title>
+    <style>
+        :root {
+            --primary: #475569;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: #334155;
+            margin: 0;
+            padding: 15px;
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- [新增] 返回按鈕樣式 --- */
+        .nav-header {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #64748b;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .home-btn:hover {
+            background-color: #f8fafc;
+            color: #0f172a;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .home-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        /* ------------------------- */
+
+        h1 {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+            margin-top: 0;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* --- Level 1: Category Card --- */
+        details.category-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        summary.category-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            list-style: none;
+            outline: none;
+        }
+        summary.category-header::-webkit-details-marker { display: none; }
+        
+        summary.category-header:active {
+            background-color: #f8fafc;
+        }
+
+        .cat-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .cat-desc {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        
+        .icon-indicator {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+        }
+
+        details[open] > summary .icon-indicator {
+            transform: rotate(180deg);
+        }
+
+        .category-content {
+            padding: 0 16px 16px 16px;
+            border-top: 1px solid var(--border);
+            background-color: #fafafa;
+        }
+
+        /* --- Level 2: Subgroup --- */
+        details.subgroup {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        
+        summary.subgroup-header {
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none;
+            outline: none;
+            background-color: #fff;
+            border-bottom: 1px solid transparent;
+            transition: background-color 0.2s;
+        }
+        summary.subgroup-header::-webkit-details-marker { display: none; }
+        
+        summary.subgroup-header:hover {
+            background-color: #f8fafc;
+        }
+
+        details.subgroup[open] > summary.subgroup-header {
+            border-bottom: 1px solid #f1f5f9;
+            background-color: #fdfdfd;
+        }
+
+        .subgroup-title {
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subgroup-content {
+            padding: 12px;
+        }
+
+        /* --- Level 3: Chemical Item --- */
+        details.chemical-item {
+            margin-top: 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        summary.chemical-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0f172a;
+            padding: 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            list-style: none;
+            outline: none;
+        }
+        summary.chemical-header::-webkit-details-marker { display: none; }
+        summary.chemical-header::before {
+            content: '⚗️';
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* --- 自動計數樣式 --- */
+        .count-badge {
+            font-size: 0.75em;
+            color: #94a3b8;
+            margin-left: 6px;
+            font-weight: normal;
+        }
+        .subgroup-count {
+            font-size: 0.75em;
+            background-color: #f1f5f9;
+            color: #64748b;
+            padding: 2px 6px;
+            border-radius: 99px;
+            font-weight: normal;
+        }
+
+        /* Properties Tags */
+        .props-container {
+            padding-top: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .warning-box, .safe-box {
+            font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            align-items: flex-start;
+        }
+        .warning-box { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .safe-box { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+
+        /* Oil List */
+        .oil-list {
+            margin-left: 14px;
+            padding-left: 10px;
+            border-left: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        .oil-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 0.85rem;
+            padding: 4px 0;
+            border-bottom: 1px dashed #f1f5f9;
+        }
+        .oil-name { color: #334155; }
+        .oil-latin { 
+            display: block; 
+            font-size: 0.7rem; 
+            color: #94a3b8; 
+            font-style: italic; 
+        }
+        .oil-val {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            color: #475569;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        /* Color Themes */
+        .theme-orange .cat-title { color: #c2410c; }
+        .theme-orange .tag { background: #ffedd5; color: #9a3412; }
+        
+        .theme-blue .cat-title { color: #1d4ed8; }
+        .theme-blue .tag { background: #dbeafe; color: #1e40af; }
+        
+        .theme-purple .cat-title { color: #7e22ce; }
+        .theme-purple .tag { background: #f3e8ff; color: #6b21a8; }
+
+        .theme-yellow .cat-title { color: #a16207; }
+        .theme-yellow .tag { background: #fef9c3; color: #854d0e; }
+
+        .theme-red .cat-title { color: #b91c1c; }
+        .theme-red .tag { background: #fee2e2; color: #991b1b; }
+
+        .theme-cyan .cat-title { color: #0e7490; }
+        .theme-cyan .tag { background: #cffafe; color: #155e75; }
+
+        .theme-rose .cat-title { color: #be123c; }
+        .theme-rose .tag { background: #ffe4e6; color: #9f1239; }
+        
+        .theme-emerald .cat-title { color: #047857; }
+        .theme-emerald .tag { background: #d1fae5; color: #065f46; }
+
+        .theme-lime .cat-title { color: #4d7c0f; }
+        .theme-lime .tag { background: #ecfccb; color: #3f6212; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- [新增] 返回主目錄按鈕 -->
+    <!-- 請將 href 修改為您的主目錄檔案名稱 -->
+    <div class="nav-header">
+        <a href="index.html" class="home-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            返回主目錄
+        </a>
+    </div>
+
+    <h1>🌿 精油化學成分表</h1>
+    <p class="subtitle">點擊類別查看詳細成分與精油對照</p>
+
+    <!-- 1. 萜烯類 -->
+    <details class="category-card theme-orange">
+        <summary class="category-header">
+            <div class="cat-title">
+                1. 萜烯類 (Terpenes)
+                <span class="cat-desc">Terpenes - 基本單位：異戊二烯 (C5)</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            
+            <!-- Subgroup 1.1 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">單萜烯 (Monoterpenes) - C10</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">空氣中抗菌</span><span class="tag">殺細菌</span><span class="tag">刺激</span><span class="tag">化痰</span><span class="tag">止痛</span><span class="tag">抗病毒</span><span class="tag">分解膽石</span>
+                    </div>
+                    <div class="warning-box"><span>⚠️</span> 高比例萜烯類可能引致皮膚過敏，尤其是在黏膜表面。</div>
+                    
+                    <details class="chemical-item">
+                        <summary class="chemical-header">檸檬烯 (Limonene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">甜橙</span><span class="oil-latin">Citrus aurantium var sinensis</span></div><span class="oil-val">95%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">苦橙 Petitgrain</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">95%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">西柚</span><span class="oil-latin">Citrus paradisi</span></div><span class="oil-val">94%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">檸檬</span><span class="oil-latin">Citrus limon</span></div><span class="oil-val">70%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">蜜柑</span><span class="oil-latin">Citrus reticulata</span></div><span class="oil-val">70%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">秘魯聖木</span><span class="oil-latin">Bursera graveolens</span></div><span class="oil-val">70%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">佛手柑</span><span class="oil-latin">Citrus bergamia</span></div><span class="oil-val">40%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">橙花 Neroli</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">17%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">膠冷杉</span><span class="oil-latin">Abies balsamea</span></div><span class="oil-val">14%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">山雞椒</span><span class="oil-latin">Litsea cubeba</span></div><span class="oil-val">13%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">乳香</span><span class="oil-latin">Boswellia carterii</span></div><span class="oil-val">9%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">澳洲尤加利</span><span class="oil-latin">Eucalyptus Radiata</span></div><span class="oil-val">5%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">α/β-松烯/蒎烯 (α/β-pinene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">歐洲赤松</span><span class="oil-latin">Pinus sylvestris</span></div><span class="oil-val">66%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">絲柏</span><span class="oil-latin">Cupressus sempervirens</span></div><span class="oil-val">50%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">膠冷杉</span><span class="oil-latin">Abies balsamea</span></div><span class="oil-val">46%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. verbenone</span></div><span class="oil-val">42%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">岩玫瑰</span><span class="oil-latin">Cistus ladanifer</span></div><span class="oil-val">38% (α-pinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">杜松果</span><span class="oil-latin">Juniperus communis</span></div><span class="oil-val">33%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">乳香</span><span class="oil-latin">Boswellia carterii</span></div><span class="oil-val">31% (α-pinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">高地牛膝草</span><span class="oil-latin">Hyssopus decumbens</span></div><span class="oil-val">25% (β-pinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. camphor</span></div><span class="oil-val">22%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">永久花</span><span class="oil-latin">Helichrysum italicum</span></div><span class="oil-val">21% (α-pinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. 1,8 cineole</span></div><span class="oil-val">14%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">藍膠尤加利</span><span class="oil-latin">Eucalyptus globulus</span></div><span class="oil-val">10% (α-pinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">檸檬</span><span class="oil-latin">Citrus limon</span></div><span class="oil-val">10% (β-pinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">澳洲尤加利</span><span class="oil-latin">Eucalyptus radiata</span></div><span class="oil-val">3% (α-pinene)</span></div>
+                        </div>
+                    </details>
+                    
+                    <details class="chemical-item">
+                        <summary class="chemical-header">莰烯/樟烯 (Camphene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">纈草</span><span class="oil-latin">Valeriana officinalis</span></div><span class="oil-val">24%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">黑雲杉</span><span class="oil-latin">Picea mariana</span></div><span class="oil-val">18%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">岩玫瑰</span><span class="oil-latin">Cistus ladanifer</span></div><span class="oil-val">5.5%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">萜品烯/松油烯 (Terpinene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">蜜柑</span><span class="oil-latin">Citrus reticulata</span></div><span class="oil-val">19% (γ-Terpinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">甜馬可蘭</span><span class="oil-latin">Origanum majorana</span></div><span class="oil-val">15.5% (γ-Terpinene)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">茶樹</span><span class="oil-latin">Melaleuca alternifolia</span></div><span class="oil-val">10%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">δ-3-蒈烯 (delta-3-careen)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">絲柏</span><span class="oil-latin">Cupressus sempervirens</span></div><span class="oil-val">12%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">檜烯 (sabinene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">杜松果</span><span class="oil-latin">Juniperus communis</span></div><span class="oil-val">17%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">月桂烯 (myrcene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">粉紅胡椒</span><span class="oil-latin">Schinus molle</span></div><span class="oil-val">22%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">杜松果</span><span class="oil-latin">Juniperus communis</span></div><span class="oil-val">14%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">月桂葉</span><span class="oil-latin">Laurus nobilis</span></div><span class="oil-val">1.6%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">α-水芹烯 (alpha-phellandrene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">粉紅胡椒</span><span class="oil-latin">Schinus molle</span></div><span class="oil-val">23%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <!-- Subgroup 1.2 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">倍半萜烯 (Sesquiterpenes) - C15</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">輕微抗菌</span><span class="tag">殺細菌</span><span class="tag">輕度降血壓</span><span class="tag">使安靜</span><span class="tag">消炎(天藍烴-chamazulene)</span><span class="tag">某些具有止痛作用</span>
+                    </div>
+                    
+                    <details class="chemical-item">
+                        <summary class="chemical-header">母菊天藍烴 (Chamazulene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">德國洋甘菊</span><span class="oil-latin">Matricaria recutita</span></div><span class="oil-val">46%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">西洋蓍草</span><span class="oil-latin">Achillea millefolium</span></div><span class="oil-val">10%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">呋喃按-1, 3-二烯 (Furanoeudesma-1, 3-diene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">沒藥</span><span class="oil-latin">Commiphora myrrha</span></div><span class="oil-val">34%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">喜馬拉雅烯 (Himachalene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">大西洋雪松</span><span class="oil-latin">Cedrus atlantica</span></div><span class="oil-val">60%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">檀香烯 (Santalene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">檀香</span><span class="oil-latin">Santalum album</span></div><span class="oil-val">4%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">白菖烯 (Calarene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">甘松香</span><span class="oil-latin">Nardostachys jatamansi</span></div><span class="oil-val">7%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">β-石竹烯/丁香油烴 (Beta-Caryophyllene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">香蜂草</span><span class="oil-latin">Melissa officinalis</span></div><span class="oil-val">22%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">西洋蓍草</span><span class="oil-latin">Achillea millefolium</span></div><span class="oil-val">10%</span></div>
+                        </div>
+                    </details>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">大根老鸛草烯 (Gernacrene D)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">香蜂草</span><span class="oil-latin">Melissa officinalis</span></div><span class="oil-val">20%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">雪松烯 (Cedarene)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">維吉尼亞雪松</span><span class="oil-latin">Juniperus virginiana</span></div><span class="oil-val">30%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <!-- Subgroup 1.3 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">雙萜烯 (Diterpenes) - C20</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">抗真菌及過濾性病毒</span><span class="tag">部份成分有怯痰, 通便之作用</span>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 2. 醇類 -->
+    <details class="category-card theme-blue">
+        <summary class="category-header">
+            <div class="cat-title">
+                2. 醇類 (Alcohols)
+                <span class="cat-desc">Alcohols - 字尾：~ol</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+
+            <!-- Subgroup 2.1 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">單萜醇 (Monoterpenols)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">強烈殺菌劑</span><span class="tag">抗感染</span><span class="tag">抗病毒</span><span class="tag">帶有強烈的香氣</span><span class="tag">暖身</span><span class="tag">良好的神經滋補</span>
+                    </div>
+                    <div class="safe-box"><span>🛡️</span> 沒有任何構成皮膚過敏的危險，適合兒童及年長人士。</div>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">沉香醇 (Linalool)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">芳樟/香樟</span><span class="oil-latin">Cinnamomum Camphora ct linalool</span></div><span class="oil-val">94%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">醒目薰衣草</span><span class="oil-latin">Lavandula hybrida</span></div><span class="oil-val">30-50%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">百里香</span><span class="oil-latin">Thymus vulgaris ct. linalool</span></div><span class="oil-val">45%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">佛手柑薄荷</span><span class="oil-latin">Mentha Citrata</span></div><span class="oil-val">44%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">甜羅勒</span><span class="oil-latin">Ocimum basilicum ct. linalool</span></div><span class="oil-val">43%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">窄葉/真正薰衣草</span><span class="oil-latin">Lavandula angustifolia</span></div><span class="oil-val">32-42%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">穗花薰衣草</span><span class="oil-latin">Lavandula latifolia</span></div><span class="oil-val">40%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">橙花 Neroli</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">38%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">苦橙葉 Petitgrain</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">22%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">快樂鼠尾草</span><span class="oil-latin">Salvia Sclarea</span></div><span class="oil-val">15%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">佛手柑</span><span class="oil-latin">Citrus bergamia</span></div><span class="oil-val">12%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">月桂葉</span><span class="oil-latin">Laurus nobilis</span></div><span class="oil-val">10%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">天竺葵醇/牻牛兒醇 (Geraniol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">玫瑰草/馬丁香芧</span><span class="oil-latin">Cymbopogon martinii</span></div><span class="oil-val">72%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">香茅</span><span class="oil-latin">Cymbopogon nardus</span></div><span class="oil-val">55%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">波旁天竺葵</span><span class="oil-latin">Pelargonium graveolens</span></div><span class="oil-val">16%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">玫瑰奧圖 Rose Otto</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">16%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">玫瑰原精 Rose Absolute</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">7%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">橙花 Neroli</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">2.3%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">薄荷醇 (Menthol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">胡椒薄荷</span><span class="oil-latin">Mentha piperita</span></div><span class="oil-val">32%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">萜品烯四醇 (Terpinen-4-ol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">茶樹</span><span class="oil-latin">Melaleuca alternifolia</span></div><span class="oil-val">40%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">甜馬可蘭</span><span class="oil-latin">Origanum majorana</span></div><span class="oil-val">21%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">香茅醇 (Citronellol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">波旁天竺葵</span><span class="oil-latin">Pelargonium graveolens</span></div><span class="oil-val">32%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">玫瑰奧圖 Rose Otto</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">32%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">玫瑰原精 Rose Absolute</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">11%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">檸檬尤加利</span><span class="oil-latin">Eucalyptus citriodora</span></div><span class="oil-val">3.5%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">橙花醇 (Nerol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">玫瑰奧圖 Rose Otto</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">9%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">橙花 Neroli</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">0.9%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">α-萜烯醇 (α-terpineol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">秘魯聖木</span><span class="oil-latin">Bursera graveolens</span></div><span class="oil-val">10%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <!-- Subgroup 2.2 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">倍半萜醇 (Sesquiterpenols)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">抗炎</span><span class="tag">降血壓</span><span class="tag">解除淋巴腫脹</span><span class="tag">與單萜醇近似, 但同時亦可使用作靜脈及淋巴管減充血劑</span>
+                    </div>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">檀香醇 (Santalol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">檀香</span><span class="oil-latin">Santalum album</span></div><span class="oil-val">69%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">岩蘭醇 (Vetiverol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">岩蘭草</span><span class="oil-latin">Vetiveria zizanioides</span></div><span class="oil-val">30%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">紅沒藥醇 (α-bisabolol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">德國洋甘菊</span><span class="oil-latin">Matricaria recutita</span></div><span class="oil-val">2-67%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">雪松醇 (cedrol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">維吉尼亞雪松</span><span class="oil-latin">juniperus virginiana</span></div><span class="oil-val">21%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">絲柏</span><span class="oil-latin">cupressus sempervirens</span></div><span class="oil-val">7%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <!-- Subgroup 2.3 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">雙萜烯醇 (Diterpenols)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">結構上與人類的雌激素相近, 有平衡激素系統的作用</span><span class="tag">在精油化學中雙萜烯醇並不常見</span>
+                    </div>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">硬尾醇 (Sclareol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">快樂鼠尾草</span><span class="oil-latin">Salvia Sclarea</span></div><span class="oil-val">1%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <!-- Subgroup 2.4 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">笨乙醇 (Phenylethyl alcohol)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">笨乙醇 (Phenylethyl alcohol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">玫瑰原精 Rose Absolute</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">73%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 3. 酚類 -->
+    <details class="category-card theme-orange">
+        <summary class="category-header">
+            <div class="cat-title">
+                3. 酚類 (Phenols)
+                <span class="cat-desc">Phenols - 字尾：~ol</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <div class="props-container">
+                <span class="tag">強力抗菌及殺菌劑</span><span class="tag">防腐</span><span class="tag">對神經及免疫系統有激勵作用</span><span class="tag">具有良好的抗氧化、抗突變及抗腫瘤</span><span class="tag">建議使用低劑量並以短時期使用為原則</span>
+            </div>
+            <div class="warning-box"><span>⚠️</span> 對肝臟可能具有毒性及可能引致皮膚過敏</div>
+            <div class="warning-box"><span>⚠️</span> 高劑量使用有機會引致神經中毒</div>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">主要酚類</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">丁香酚 (Eugenol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">丁香花苞 Clove Bud</span><span class="oil-latin">Eugenia caryophyllata</span></div><span class="oil-val">80%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">肉桂葉</span><span class="oil-latin">Cinnamomum zeylanicum</span></div><span class="oil-val">74%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">百里酚 (Thymol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">百里香</span><span class="oil-latin">Thymus vulgaris ct. thymol</span></div><span class="oil-val">32-63%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">香荊芥酚 (Carvacrol)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">百里香</span><span class="oil-latin">Thymus vulgaris ct. thymol</span></div><span class="oil-val">23-44%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 4. 醛類 -->
+    <details class="category-card theme-yellow">
+        <summary class="category-header">
+            <div class="cat-title">
+                4. 醛類 (Aldehydes)
+                <span class="cat-desc">Aldehydes - 字尾：~al</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+
+            <!-- Subgroup 4.1 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">脂肪醛 (Aliphatic Aldehydes)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">抗感染</span><span class="tag">抗發炎</span><span class="tag">消炎</span><span class="tag">抗病毒</span><span class="tag">降血壓</span><span class="tag">平復神經系統</span><span class="tag">降溫</span><span class="tag">強烈芳香</span>
+                    </div>
+                    <div class="warning-box"><span>⚠️</span> 某程度上對皮膚造成刺激,容易引起過敏。</div>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">檸檬醛 (Citral) = 橙花醛 (Neral) + 牻牛兒醛 (Geranial)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">檸檬草/檸檬香茅</span><span class="oil-latin">Cymbopogon flexuosus</span></div><span class="oil-val">81%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">山雞椒</span><span class="oil-latin">Litsea cubeba</span></div><span class="oil-val">80%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">香蜂草</span><span class="oil-latin">Melissa officinalis</span></div><span class="oil-val">20%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">香茅 Citronella</span><span class="oil-latin">Cymbopogon nardus</span></div><span class="oil-val">7% (Geraniol)</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">香茅醛 (Citronellal)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">檸檬尤加利</span><span class="oil-latin">Corymbia citriodora</span></div><span class="oil-val"><77%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">香茅 Citronella</span><span class="oil-latin">Cymbopogon nardus</span></div><span class="oil-val">6%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <!-- Subgroup 4.2 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">芳香醛 (Aromatic Aldehydes)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">強效抗病毒</span><span class="tag">強效殺菌</span><span class="tag">提升免疫</span><span class="tag">降低發炎反應</span><span class="tag">具有強大刺激性</span>
+                    </div>
+                    <div class="warning-box"><span>⚠️</span> 對皮膚刺激性非常強烈，亦對肝臟有負擔，使用時必須稀釋。</div>
+
+                    <details class="chemical-item">
+                        <summary class="chemical-header">肉桂醛 (Cinnamaldehyde)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">錫蘭肉桂皮 Cinnamon Bark</span><span class="oil-latin">Cinnamomum zeylanicum</span></div><span class="oil-val">68%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 5. 酮類 -->
+    <details class="category-card theme-purple">
+        <summary class="category-header">
+            <div class="cat-title">
+                5. 酮類 (Ketones)
+                <span class="cat-desc">Ketones - 字尾：~one</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <div class="props-container">
+                <span class="tag">平復及鎮靜</span><span class="tag">分解黏液及脂肪</span><span class="tag">形成傷疤組織來促進傷口復原</span><span class="tag">某些酮類具有消化作用，而其他則可止痛、刺激或化痰</span><span class="tag">建議使用低劑量並以短時期使用為原則</span>
+            </div>
+            <div class="warning-box"><span>⚠️</span> 引致早產或流產</div>
+            <div class="warning-box"><span>⚠️</span> 不可以高濃度使用，高劑量使用有機會引致神經中毒</div>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">單萜酮 (Monoterpenones)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">樟腦 (Camphor)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. camphor</span></div><span class="oil-val">13-20%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">西洋蓍草</span><span class="oil-latin">Achillea millefolium</span></div><span class="oil-val">10-20%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">醒目薰衣草</span><span class="oil-latin">Lavandula hybrida</span></div><span class="oil-val">5-15%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. 1,8 cineole</span></div><span class="oil-val">10-13%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">穗花薰衣草</span><span class="oil-latin">Lavandula latifolia</span></div><span class="oil-val">10-11%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. verbenone</span></div><span class="oil-val">~10%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">薄荷酮 (Menthone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">胡椒薄荷</span><span class="oil-latin">Mentha piperita</span></div><span class="oil-val">25%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">松香芹酮 (Pinocarvone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">藍膠尤加利</span><span class="oil-latin">Eucalyptus Globulus</span></div><span class="oil-val">0.3%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">香芹酮 (Carvone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">綠薄荷</span><span class="oil-latin">Mentha spicata</span></div><span class="oil-val">58%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">馬鞭草酮 (Verbenone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. verbenone</span></div><span class="oil-val">5%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">異松樟酮 (Iso-Pinocamphone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">牛膝草</span><span class="oil-latin">Hyssopus officinalis</span></div><span class="oil-val">45% (危險)</span></div>
+                            <div class="oil-item"><div><span class="oil-name">高地牛膝草</span><span class="oil-latin">Hyssopus decumbens</span></div><span class="oil-val">3%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">倍半萜酮 / 雙酮</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">意大利酮 (Italidione)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">永久花</span><span class="oil-latin">Helichrysum italicum</span></div><span class="oil-val">4%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">纈草酮 (Valeranone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">甘松香</span><span class="oil-latin">Nardostachys jatamansi</span></div><span class="oil-val">3%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">大西洋酮 (Atlantone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">大西洋雪松</span><span class="oil-latin">Cedrus atlantica</span></div><span class="oil-val">4%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 6. 酸類 -->
+    <details class="category-card theme-emerald">
+        <summary class="category-header">
+            <div class="cat-title">
+                6. 酸類 (Acids)
+                <span class="cat-desc">Acids - 字尾：~acids; 精油中很少含有酸類</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <div class="props-container">
+                <span class="tag">消炎</span><span class="tag">抗發炎</span><span class="tag">鎮靜</span><span class="tag">精油內的酸質呈現自由態較罕有,通常只會出現在與酯質結合的形態中並且份量微細</span>
+            </div>
+            <div class="safe-box"><span>🛡️</span> 沒有危險性</div>
+        </div>
+    </details>
+
+    <!-- 7. 酯類 -->
+    <details class="category-card theme-dark purple">
+        <summary class="category-header">
+            <div class="cat-title">
+                7. 酯類 (Esters)
+                <span class="cat-desc">Esters - 字尾：~yl ~ate</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <div class="props-container">
+                <span class="tag">性質溫和，不具刺激性</span><span class="tag">抗痙攣(放鬆)</span><span class="tag">消炎</span><span class="tag">抗真菌</span><span class="tag">瘡及傷口復原劑</span><span class="tag">撫平神經系統</span><span class="tag">對皮膚紅斑及其他皮膚問題非常見效</span><span class="tag">沒有危險性</span><span class="tag">精油中甜味的主要來源</span>
+            </div>
+            <div class="warning-box"><span>⚠️</span>沒有危險性，但冬青及樺樹精油所含的水楊酸甲酯則例外</div>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">乙酸沉香酯 (Linalyl Acetate)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">乙酸沉香酯</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">快樂鼠尾草</span><span class="oil-latin">Salvia sclarea</span></div><span class="oil-val">64%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">苦橙葉 Petitgrain</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">50%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">窄葉/真正薰衣草</span><span class="oil-latin">Lavandula angustifolia</span></div><span class="oil-val">40-52%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">醒目薰衣草</span><span class="oil-latin">Lavandula hybrida</span></div><span class="oil-val">15-50%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">佛手柑薄荷</span><span class="oil-latin">Mentha citrata</span></div><span class="oil-val">35%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">佛手柑</span><span class="oil-latin">Citrus bergamia</span></div><span class="oil-val">26%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">其他酯類</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">乙酸龍腦酯 (Bornyl Acetate)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">纈草</span><span class="oil-latin">Valeriana officinalis</span></div><span class="oil-val">32%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">黑雲杉</span><span class="oil-latin">Picea mariana</span></div><span class="oil-val">23%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">膠冷杉</span><span class="oil-latin">Abies balsamea</span></div><span class="oil-val">17%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">乙酸牻牛兒酯 (Geranyl Acetate)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">玫瑰草/馬丁香茅 Palmarosa</span><span class="oil-latin">Cymbopogon martinii</span></div><span class="oil-val">16%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">香茅</span><span class="oil-latin">Cymbopogon nardus</span></div><span class="oil-val">2%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">乙酸丁香酯 (Eugenyl acetate)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">丁香花苞 Clove Bud</span><span class="oil-latin">Eugenia caryophyllata</span></div><span class="oil-val">10%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">歐白芷酸異丁酯 (Isobutly angelate)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">羅馬洋甘菊</span><span class="oil-latin">Chamaemelum nobile</span></div><span class="oil-val">35%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">歐白芷酸異戍酯 (Butly angelate)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">羅馬洋甘菊</span><span class="oil-latin">Chamaemelum nobile</span></div><span class="oil-val">20%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 8. 氧化物類 -->
+    <details class="category-card theme-cyan">
+        <summary class="category-header">
+            <div class="cat-title">
+                8. 氧化物類 (Oxides)
+                <span class="cat-desc">Oxides - 字尾：~ole / ~oxide</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <div class="props-container">
+                <span class="tag">化解黏液</span><span class="tag">排痰</span><span class="tag">促進黏液化解，對傷風咳嗽及呼吸管道閉塞問題方面有幫助</span>
+            </div>
+            <div class="warning-box"><span>⚠️</span>容易引起皮膚刺激</div>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">1,8 桉油醇 (1,8 Cineole)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="warning-box"><span>⚠️</span>不適宜六歲以下兒童使用</div>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">1,8 桉油醇</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">藍膠尤加利</span><span class="oil-latin">Eucalyptus globulus</span></div><span class="oil-val">75%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">澳洲尤加利</span><span class="oil-latin">Eucalyptus radiata</span></div><span class="oil-val">68%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">桉油樟/羅文莎葉</span><span class="oil-latin">Cinnamomum Camphora ct 1.8-cineole</span></div><span class="oil-val">58%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">高地牛膝草</span><span class="oil-latin">Hyssopus decumbens</span></div><span class="oil-val">50%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. 1,8 cineole</span></div><span class="oil-val">40%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">月桂葉</span><span class="oil-latin">Laurus nobilis</span></div><span class="oil-val">32%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">穗花薰衣草</span><span class="oil-latin">Lavandula latifolia</span></div><span class="oil-val">27%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">醒目薰衣草</span><span class="oil-latin">Lavandula hybrida</span></div><span class="oil-val">5-25%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. camphor</span></div><span class="oil-val">18%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">迷迭香</span><span class="oil-latin">Rosmarinus officinalis ct. verbenone</span></div><span class="oil-val">5%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">茶樹</span><span class="oil-latin">Melaleuca alternifolia</span></div><span class="oil-val">2.3%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">其他氧化物</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">玫瑰氧化物 (Rose Oxide)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">波旁天竺葵</span><span class="oil-latin">Pelargonium graveolens</span></div><span class="oil-val">1.2%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">紅沒藥醇氧化物 (Bisabolol oxide)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">德國洋甘菊</span><span class="oil-latin">Matricaria recutita</span></div><span class="oil-val">0-55%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 9. 醚類 -->
+    <details class="category-card theme-emerald">
+        <summary class="category-header">
+            <div class="cat-title">
+                9. 醚類 (Ethers)
+                <span class="cat-desc">Ethers - 字尾：~ether / ~oxy</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <div class="props-container">
+                <span class="tag">與酚類(Phenols)近似</span><span class="tag">抗菌及殺菌</span><span class="tag">鎮靜、止痛及麻醉</span><span class="tag">抗發炎, 抗痙攣</span>
+            </div>
+            <div class="warning-box"><span>⚠️</span> 高劑量使用時可能會造成抽搐甚至死亡，使用上需特別小心。</div>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">酚醚類</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">甲基醚蔞葉酚 (Methyl Chavicol / estragole)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">熱帶羅勒</span><span class="oil-latin">Ocimum basilicum ct. Methyl-Chavicol</span></div><span class="oil-val">80%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">甜羅勒</span><span class="oil-latin">Ocimum basilicum ct. linalool</span></div><span class="oil-val">17%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">其他醚類</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">薄荷呋喃 (Menthofuran)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">秘魯聖木</span><span class="oil-latin">Bursera graveolens</span></div><span class="oil-val">0.5-14.5%</span></div>
+                        </div>
+                    </details>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">黃樟素 (Safrole)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">肉桂葉</span><span class="oil-latin">Cinnamomum verum (leaf)</span></div><span class="oil-val">~%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 10. 內酯類 -->
+    <details class="category-card theme-lime">
+        <summary class="category-header">
+            <div class="cat-title">
+                10. 內酯類 (Lactones)
+                <span class="cat-desc">Lactones - 內酯類分子較大，無法由蒸餾過程中萃取</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+
+            <!-- Subgroup 10.1 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">倍半萜內酯 (Sesquiterpene Lactones)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">與酮類(ketones)對神經產生毒性的影響相同</span><span class="tag">消炎</span><span class="tag">黏液溶解，化痰(更勝酮類)</span><span class="tag">降溫</span>
+                    </div>
+                    <div class="warning-box"><span>⚠️</span> 高劑量使用有機會引致神經中毒。</div>
+                </div>
+            </details>
+
+            <!-- Subgroup 10.2 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">香豆素 (Coumarins)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">強力抗痙攣</span><span class="tag">利尿、消水腫</span><span class="tag">促進血液循環、強心</span><span class="tag">鎮定、助眠、降低神經興奮</span><span class="tag">降血壓</span><span class="tag">具有清涼感，幫助退燒</span><span class="tag">存在於Tarragon龍艾</span>
+                    </div>
+                    <div class="safe-box"><span>🛡️</span>無光敏性。</div>
+                </div>
+            </details>
+
+            <!-- Subgroup 10.3 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">呋喃香豆素 (Ftrocoumarins)</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <div class="props-container">
+                        <span class="tag">抗淋巴水腫</span><span class="tag">振奮</span><span class="tag">抗凝血性</span>
+                    </div>
+                    <div class="warning-box"><span>⚠️</span>具有光毒性有光敏性/光毒性(Phototoxic), 使用前後不要進行日光浴(12小時內不要暴露皮膚於紫外光下)</div>
+                    <details class="chemical-item">
+                        <summary class="chemical-header">佛手柑內酯 (Bergapten)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">佛手柑</span><span class="oil-latin">Citrus bergamia</span></div><span class="oil-val">0.33%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">苦橙 Orange Bitter</span><span class="oil-latin">Citrus aurantium var. amara</span></div><span class="oil-val">0.03%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">西柚</span><span class="oil-latin">Citrus paradisi</span></div><span class="oil-val">0.02%</span></div>
+                            <div class="oil-item"><div><span class="oil-name">檸檬</span><span class="oil-latin">Citrus limon</span></div><span class="oil-val"><0.02%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+
+
+            <!-- Subgroup 10.4 -->
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">其他內酯</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">土木香內酯 (Alantolactone)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">土木香</span><span class="oil-latin">Inula helenium</span></div><span class="oil-val">40-50%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+    <!-- 11. 其他 -->
+    <details class="category-card theme-yellow">
+        <summary class="category-header">
+            <div class="cat-title">
+                11. 其他 (Others)
+                <span class="cat-desc">其他成分</span>
+            </div>
+            <div class="icon-indicator">▼</div>
+        </summary>
+        <div class="category-content">
+            <details class="subgroup">
+                <summary class="subgroup-header">
+                    <span class="subgroup-title">其他成分</span>
+                    <div class="icon-indicator">▼</div>
+                </summary>
+                <div class="subgroup-content">
+                    <details class="chemical-item">
+                        <summary class="chemical-header">玫瑰蠟 (Rose Wax)</summary>
+                        <div class="oil-list">
+                            <div class="oil-item"><div><span class="oil-name">玫瑰奧圖 Rose Otto</span><span class="oil-latin">Rosa Damascena</span></div><span class="oil-val">15-24%</span></div>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </details>
+
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. 計算每個化學成分 (Chemical Item) 下的精油數量
+        const chemicalItems = document.querySelectorAll('.chemical-item');
+        chemicalItems.forEach(item => {
+            const oilCount = item.querySelectorAll('.oil-item').length;
+            const header = item.querySelector('.chemical-header');
+            
+            // 創建顯示數量的標籤
+            const countSpan = document.createElement('span');
+            countSpan.className = 'count-badge';
+            countSpan.textContent = `(${oilCount})`;
+            header.appendChild(countSpan);
+        });
+
+        // 2. 計算每個次分類 (Subgroup) 下的總精油數量
+        const subgroups = document.querySelectorAll('.subgroup');
+        subgroups.forEach(group => {
+            // 計算該 subgroup 內所有 oil-item 的數量
+            const totalOils = group.querySelectorAll('.oil-item').length;
+            const title = group.querySelector('.subgroup-title');
+            
+            if (totalOils > 0) {
+                const groupBadge = document.createElement('span');
+                groupBadge.className = 'subgroup-count';
+                groupBadge.textContent = `共 ${totalOils} 筆`;
+                title.appendChild(groupBadge);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

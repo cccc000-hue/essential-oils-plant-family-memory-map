@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>植物科屬精油記憶卡</title>
+    <title>植物科屬功能精油記憶卡</title>
     <style>
         :root {
-            /* 使用您提供的紫色系風格 */
             --primary: #6b4c9a;
             --primary-light: #8e72b6;
             --bg: #f9f9f9;
             --card-bg: #ffffff;
             --text-main: #333333;
-            --text-sub: #666666;
+            --text-sub: #555555;
             --tag-bg: #f3f0f7;
+            --border-color: #e0e0e0;
         }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body {
@@ -136,7 +137,7 @@
             box-shadow: 0 4px 12px rgba(107, 76, 154, 0.15);
         }
         .front-cn { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; color: var(--text-main); }
-        .front-en { font-size: 1.2rem; color: var(--text-sub); font-style: italic; font-weight: 500; }
+        .front-en { font-size: 1.2rem; color: #666; font-style: italic; font-weight: 500; }
         .tap-hint { 
             margin-top: 40px; 
             font-size: 0.8rem; 
@@ -158,48 +159,52 @@
             border-left: 6px solid var(--primary);
         }
         .back-header h3 { font-size: 1.3rem; margin-bottom: 4px; color: var(--primary); }
-        .back-header p { font-size: 1rem; color: var(--text-sub); font-style: italic; }
+        .back-header p { font-size: 1rem; color: #666; font-style: italic; }
 
         .back-content { 
             flex: 1; 
             overflow-y: auto; 
             padding: 20px; 
             -webkit-overflow-scrolling: touch; 
+            background-color: var(--secondary-color);
         }
         
         .section { margin-bottom: 24px; }
         .section-title { 
-            font-size: 0.9rem; 
+            font-size: 0.95rem; 
             font-weight: 700; 
             color: #444; 
             text-transform: uppercase; 
             letter-spacing: 1px; 
-            border-bottom: 2px solid var(--tag-bg); 
+            border-bottom: 1px solid #ddd; 
             padding-bottom: 6px; 
             margin-bottom: 12px;
         }
 
-        /* 列表樣式優化 */
+        /* 列表樣式 */
         ul { padding-left: 20px; margin: 0; }
-        li { margin-bottom: 8px; font-size: 0.95rem; line-height: 1.5; color: #333; }
+        li { margin-bottom: 10px; font-size: 0.95rem; line-height: 1.5; color: #333; }
         
-        /* 精油標籤樣式 */
-        .oil-tag {
-            display: inline-block;
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 4px 10px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #2c3e50;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        /* 精油標籤樣式 - 嚴格依照要求 */
+        .oil-item {
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
-        .oil-latin {
-            font-weight: 400;
+        .oil-name {
+            font-weight: bold;
+            color: #2c3e50;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 2px 8px;
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 0.95rem;
+        }
+        .latin-oil {
             font-style: italic;
-            color: #666;
-            font-size: 0.9em;
+            font-weight: normal;
+            font-size: 0.95rem;
+            color: #555;
             margin-left: 4px;
         }
 
@@ -237,18 +242,24 @@
             text-align: center; 
             color: var(--text-sub); 
         }
+
+        @media (max-width: 600px) {
+            .front-cn { font-size: 1.8rem; }
+            .front-en { font-size: 1rem; }
+            .latin-oil { display: block; margin-left: 0; margin-top: 2px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>植物科屬精油記憶卡</h1>
+        <h1>植物科屬功能精油記憶卡</h1>
         <div class="counter" id="counter">載入中...</div>
     </header>
 
     <div class="search-container">
         <div class="search-input-wrapper">
-            <input type="text" class="search-input" id="searchInput" placeholder="搜尋科屬、精油名稱、功效...">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜尋科屬、精油、功效...">
             <button class="clear-btn" id="clearBtn">✕</button>
         </div>
     </div>
@@ -256,16 +267,16 @@
     <div class="scene">
         <div class="no-results" id="noResults">
             <div style="font-size: 3rem; margin-bottom: 10px;">🔍</div>
-            <p>找不到相關科屬</p>
+            <p>找不到相關資料</p>
         </div>
 
         <div class="card" id="card">
             <!-- 正面 -->
             <div class="card__face card__face--front">
-                <div class="icon-circle">🌱</div>
+                <div class="icon-circle">🌿</div>
                 <div class="front-cn" id="frontCn"></div>
                 <div class="front-en" id="frontEn"></div>
-                <div class="tap-hint">點擊查看精油與功效</div>
+                <div class="tap-hint">點擊翻牌</div>
             </div>
 
             <!-- 背面 -->
@@ -296,65 +307,69 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 資料庫：從您提供的 HTML 結構中提取並整理
+            // 資料庫：完全依照您提供的 HTML 內容整理，包含所有中英文及拉丁學名
             var familyData = [
                 {
                     cn: "番荔枝科",
                     latin: "Annonaceae",
-                    oils: `<ul><li><span class="oil-tag">依蘭依蘭 <span class="oil-latin">(Cananga odorata)</span></span></li></ul>`,
+                    oils: `<ul><li><span class="oil-name">依蘭依蘭 Ylang Ylang</span> <span class="latin-oil">(Cananga odorata)</span></li></ul>`,
                     func: `<ul><li>平伏 (Soothing)</li><li>平衡 (Balancing)</li><li>平靜 (Calming)</li></ul>`
                 },
                 {
                     cn: "橄欖科",
                     latin: "Burseraceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">乳香 <span class="oil-latin">(Boswellia carteri)</span></span></li>
-                        <li><span class="oil-tag">印度乳香 <span class="oil-latin">(Boswellia serrata)</span></span></li>
-                        <li><span class="oil-tag">欖香脂 <span class="oil-latin">(Canarium luzonicum)</span></span></li>
-                        <li><span class="oil-tag">沒藥 <span class="oil-latin">(Commiphora myrrha)</span></span></li>
-                        <li><span class="oil-tag">秘魯聖木 <span class="oil-latin">(Bursera graveolens)</span></span></li>
+                        <li><span class="oil-name">乳香 Frankincense</span> <span class="latin-oil">(Boswellia carteri)</span></li>
+                        <li><span class="oil-name">印度乳香 Indian Frankincense</span> <span class="latin-oil">(Boswellia serrata)</span></li>
+                        <li><span class="oil-name">欖香脂 Elemi</span> <span class="latin-oil">(Canarium luzonicum)</span></li>
+                        <li><span class="oil-name">沒藥 Myrrh</span> <span class="latin-oil">(Commiphora myrrha)</span></li>
+                        <li><span class="oil-name">秘魯聖木 Palo Santo</span> <span class="latin-oil">(Bursera graveolens)</span></li>
                     </ul>`,
                     func: `<ul><li>化痰</li><li>促進傷口癒合及潰瘍</li><li>減少疤痕組織</li><li>具有酸類，親膚性強</li><li>護膚抗皺</li><li>促進血液循環，活血化瘀</li><li>強效抗菌消炎</li></ul>`
                 },
                 {
                     cn: "半日花科",
                     latin: "Cistaceae",
-                    oils: `<ul><li><span class="oil-tag">岩玫瑰 <span class="oil-latin">(Cistus ladaniferus)</span></span></li></ul>`,
+                    oils: `<ul><li><span class="oil-name">岩玫瑰 Cistus</span> <span class="latin-oil">(Cistus ladaniferus)</span></li></ul>`,
                     func: `<ul><li>促進傷口癒合</li><li>止血</li><li>提升免疫力</li><li>抗病毒</li></ul>`
                 },
                 {
                     cn: "菊科",
                     latin: "Compositae / Asteraceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">德國洋甘菊 <span class="oil-latin">(Matricaria chamomilla)</span></span></li>
-                        <li><span class="oil-tag">羅馬洋甘菊 <span class="oil-latin">(Anthemis nobilis)</span></span></li>
-                        <li><span class="oil-tag">永久花 <span class="oil-latin">(Helichrysum italicum)</span></span></li>
-                        <li><span class="oil-tag">萬壽菊 <span class="oil-latin">(Tagetes minuta)</span></span></li>
-                        <li><span class="oil-tag">蓍草 <span class="oil-latin">(Achillea millefolium)</span></span></li>
-                        <li><span class="oil-tag">龍艾 <span class="oil-latin">(Artemisia dracunculus)</span></span></li>
-                        <li><span class="oil-tag">艾草 <span class="oil-latin">(Artemisia vulgaris)</span></span></li>
-                        <li><span class="oil-tag">摩洛哥藍艾菊 <span class="oil-latin">(Tanacetum annuum)</span></span></li>
+                        <li><span class="oil-name">德國洋甘菊 Chamomile German</span> <span class="latin-oil">(Matricaria chamomilla)</span></li>
+                        <li><span class="oil-name">羅馬洋甘菊 Chamomile Roman</span> <span class="latin-oil">(Anthemis nobilis)</span></li>
+                        <li><span class="oil-name">永久花 Immortelle</span> <span class="latin-oil">(Helichrysum italicum)</span></li>
+                        <li><span class="oil-name">萬壽菊 Tagetes</span> <span class="latin-oil">(Tagetes minuta)</span></li>
+                        <li><span class="oil-name">蓍草 Yarrow</span> <span class="latin-oil">(Achillea millefolium)</span></li>
+                        <li><span class="oil-name">龍艾 Tarragon</span> <span class="latin-oil">(Artemisia dracunculus)</span></li>
+                        <li><span class="oil-name">艾草 Mugwort</span> <span class="latin-oil">(Artemisia vulgaris)</span></li>
+                        <li><span class="oil-name">摩洛哥藍艾菊 Blue Tansy</span> <span class="latin-oil">(Tanacetum annuum)</span></li>
+                        <li><span class="oil-name">土木香 Elecampane</span> <span class="latin-oil">(Inula graveolens)</span></li>
+                        <li><span class="oil-name">一枝黃花 Gold Rod</span> <span class="latin-oil">(Solidago canadensis)</span></li>
                     </ul>`,
-                    func: `<ul><li>殺菌、平靜</li><li>抗過敏性、抗真菌、抗感染</li><li>消化不良</li><li>發炎</li><li>失眠、壓力</li><li>*某些具酮類要小心用量</li></ul>`
+                    func: `<ul><li>殺菌</li><li>平靜</li><li>抗過敏性</li><li>抗真菌</li><li>抗感染</li><li>消化不良</li><li>發炎</li><li>失眠、壓力</li><li>*某些具酮類要小心用量</li></ul>`
                 },
                 {
                     cn: "柏科",
-                    latin: "Cupressaceae",
+                    latin: "Coniferae / Cupressaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">絲柏 <span class="oil-latin">(Cupressus sempervirens)</span></span></li>
-                        <li><span class="oil-tag">杜松 <span class="oil-latin">(Juniperus communis)</span></span></li>
-                        <li><span class="oil-tag">維吉尼亞雪松 <span class="oil-latin">(Juniperus virginiana)</span></span></li>
-                        <li><span class="oil-tag">藍絲柏 <span class="oil-latin">(Callitris intratropica)</span></span></li>
+                        <li><span class="oil-name">絲柏 Cypress</span> <span class="latin-oil">(Cupressus sempervirens)</span></li>
+                        <li><span class="oil-name">杜松 Juniper</span> <span class="latin-oil">(Juniperus communis)</span></li>
+                        <li><span class="oil-name">杜松果 Juniper Berry</span> <span class="latin-oil">(Juniperus communis)</span></li>
+                        <li><span class="oil-name">維吉尼亞雪松 Cedarwood Virginian</span> <span class="latin-oil">(Juniperus virginiana)</span></li>
+                        <li><span class="oil-name">藍絲柏 Blue Cypress</span> <span class="latin-oil">(Callitris intratropica)</span></li>
+                        <li><span class="oil-name">圓柏 Savin</span> <span class="latin-oil">(Juniperus sabina)</span></li>
                     </ul>`,
-                    func: `<ul><li>抗菌、抗感染、殺菌</li><li>黏液溶解、呼吸系統消毒</li><li>消除水腫、排毒</li><li>促進循環，有助腎臟淨化</li><li>*但用量過高是會刺激腎臟</li><li>具有收斂特性，可以收緊毛孔</li></ul>`
+                    func: `<ul><li>抗菌、抗感染</li><li>殺菌</li><li>黏液溶解</li><li>呼吸系統消毒</li><li>消除水腫、排毒</li><li>促進循環，有助腎臟淨化</li><li>*但用量過高是會刺激腎臟</li><li>具有收斂特性，可以收緊毛孔</li></ul>`
                 },
                 {
                     cn: "牻牛兒苗科",
                     latin: "Geraniaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">天竺葵 <span class="oil-latin">(Pelargonium graveolens)</span></span></li>
-                        <li><span class="oil-tag">玫瑰天竺葵 <span class="oil-latin">(Pelargonium roseum)</span></span></li>
-                        <li><span class="oil-tag">大根老鸛草 <span class="oil-latin">(Geranium macrorrhizum)</span></span></li>
+                        <li><span class="oil-name">天竺葵 Geranium</span> <span class="latin-oil">(Pelargonium graveolens)</span></li>
+                        <li><span class="oil-name">玫瑰天竺葵 Rose Geranium</span> <span class="latin-oil">(Pelargonium roseum)</span></li>
+                        <li><span class="oil-name">大根老鸛草 True Geranium / Zdravets</span> <span class="latin-oil">(Geranium macrorrhizum)</span></li>
                     </ul>`,
                     func: `<ul><li>抗紅腫發炎</li><li>殺菌</li><li>抗毒素</li><li>滋補神經</li><li>平伏</li><li>洗淨及冷卻皮膚</li></ul>`
                 },
@@ -362,83 +377,92 @@
                     cn: "唇形科",
                     latin: "Labiatae / Lamiaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">羅勒 <span class="oil-latin">(Ocimum basilicum)</span></span></li>
-                        <li><span class="oil-tag">快樂鼠尾草 <span class="oil-latin">(Salvia sclarea)</span></span></li>
-                        <li><span class="oil-tag">薰衣草 <span class="oil-latin">(Lavandula angustifolia)</span></span></li>
-                        <li><span class="oil-tag">香蜂草 <span class="oil-latin">(Melissa officinalis)</span></span></li>
-                        <li><span class="oil-tag">胡椒薄荷 <span class="oil-latin">(Mentha x piperita)</span></span></li>
-                        <li><span class="oil-tag">迷迭香 <span class="oil-latin">(Salvia rosmarinus)</span></span></li>
-                        <li><span class="oil-tag">百里香 <span class="oil-latin">(Thymus vulgaris)</span></span></li>
-                        <li><span class="oil-tag">廣藿香 <span class="oil-latin">(Pogostemon cablin)</span></span></li>
+                        <li><span class="oil-name">羅勒 Basil</span> <span class="latin-oil">(Ocimum basilicum)</span></li>
+                        <li><span class="oil-name">快樂鼠尾草 Clary Sage</span> <span class="latin-oil">(Salvia sclarea)</span></li>
+                        <li><span class="oil-name">高地牛膝草 Mountain Hyssop</span> <span class="latin-oil">(Hyssopus decumbens)</span></li>
+                        <li><span class="oil-name">薰衣草 Lavender</span> <span class="latin-oil">(Lavandula angustifolia)</span></li>
+                        <li><span class="oil-name">醒目薰衣草 Lavandin</span> <span class="latin-oil">(Lavandula x intermedia)</span></li>
+                        <li><span class="oil-name">香蜂草 Melissa</span> <span class="latin-oil">(Melissa officinalis)</span></li>
+                        <li><span class="oil-name">甜橙薄荷 Orange Mint</span> <span class="latin-oil">(Mentha x citrata)</span></li>
+                        <li><span class="oil-name">胡椒薄荷 Peppermint</span> <span class="latin-oil">(Mentha x piperita)</span></li>
+                        <li><span class="oil-name">迷迭香 Rosemary</span> <span class="latin-oil">(Salvia rosmarinus)</span></li>
+                        <li><span class="oil-name">鼠尾草 Sage</span> <span class="latin-oil">(Salvia officinalis)</span></li>
+                        <li><span class="oil-name">甜馬鬱蘭 Sweet Marjoram</span> <span class="latin-oil">(Origanum majorana)</span></li>
+                        <li><span class="oil-name">百里香 Thyme</span> <span class="latin-oil">(Thymus vulgaris)</span></li>
+                        <li><span class="oil-name">廣藿香 Patchouli</span> <span class="latin-oil">(Pogostemon cablin)</span></li>
                     </ul>`,
-                    func: `<ul><li>殺菌、止痛</li><li>抗紅腫發炎</li><li>治痙攣</li><li>通經</li><li>促進排汗</li><li>呼吸系統</li><li>防病毒</li><li>平衡、芳香</li></ul>`
+                    func: `<ul><li>殺菌、止痛</li><li>抗紅腫發炎</li><li>治痙攣</li><li>通經</li><li>促進排汗</li><li>呼吸系統</li><li>防病毒</li><li>平衡</li><li>芳香</li></ul>`
                 },
                 {
                     cn: "樟科",
                     latin: "Lauraceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">羅文莎葉 <span class="oil-latin">(Ravensara aromatica)</span></span></li>
-                        <li><span class="oil-tag">樟腦 <span class="oil-latin">(Cinnamomum camphora)</span></span></li>
-                        <li><span class="oil-tag">月桂 <span class="oil-latin">(Laurus nobilis)</span></span></li>
-                        <li><span class="oil-tag">肉桂葉 <span class="oil-latin">(Cinnamomum zeylanicum)</span></span></li>
-                        <li><span class="oil-tag">花梨木 <span class="oil-latin">(Aniba rosaeodora)</span></span></li>
-                        <li><span class="oil-tag">芳樟 <span class="oil-latin">(Cinnamomum camphora ct linalool)</span></span></li>
-                        <li><span class="oil-tag">山雞椒 <span class="oil-latin">(Litsea cubeba)</span></span></li>
+                        <li><span class="oil-name">羅文莎葉 Ravensara</span> <span class="latin-oil">(Ravensara aromatica)</span></li>
+                        <li><span class="oil-name">樟腦 Camphor</span> <span class="latin-oil">(Cinnamomum camphora)</span></li>
+                        <li><span class="oil-name">月桂 Bay Laurel</span> <span class="latin-oil">(Laurus nobilis)</span></li>
+                        <li><span class="oil-name">肉桂葉 Cinnamon leaf</span> <span class="latin-oil">(Cinnamomum zeylanicum)</span></li>
+                        <li><span class="oil-name">錫蘭肉桂皮 Cinnamon bark</span> <span class="latin-oil">(Cinnamomum verum)</span></li>
+                        <li><span class="oil-name">花梨木 Rosewood</span> <span class="latin-oil">(Aniba rosaeodora)</span></li>
+                        <li><span class="oil-name">芳樟/葉 Ho wood/leaf</span> <span class="latin-oil">(Cinnamomum camphora ct linalool)</span></li>
+                        <li><span class="oil-name">山雞椒 May Chang</span> <span class="latin-oil">(Litsea cubeba)</span></li>
+                        <li><span class="oil-name">桉油樟 Ravintsara</span> <span class="latin-oil">(Cinnamomum camphora ct 1.8 cineole)</span></li>
                     </ul>`,
                     func: `<ul><li>抗真菌</li><li>殺菌效力強勁，快速見效</li><li>抗病毒</li><li>提升免疫力</li></ul>`
                 },
                 {
                     cn: "肉豆蔻科",
                     latin: "Myristicaceae",
-                    oils: `<ul><li><span class="oil-tag">肉豆蔻 <span class="oil-latin">(Myristica fragrans)</span></span></li></ul>`,
+                    oils: `<ul><li><span class="oil-name">肉豆蔻 Nutmeg</span> <span class="latin-oil">(Myristica fragrans)</span></li></ul>`,
                     func: `<ul><li>止痛</li><li>幫助減輕肌肉疼痛及痛楚</li><li>強力大腦刺激劑</li></ul>`
                 },
                 {
                     cn: "桃金孃科",
                     latin: "Myrtaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">丁香 <span class="oil-latin">(Eugenia caryophyllata)</span></span></li>
-                        <li><span class="oil-tag">尤加利 <span class="oil-latin">(Eucalyptus globulus/radiata)</span></span></li>
-                        <li><span class="oil-tag">綠花白千層 <span class="oil-latin">(Melaleuca viridiflora)</span></span></li>
-                        <li><span class="oil-tag">茶樹 <span class="oil-latin">(Melaleuca alternifolia)</span></span></li>
-                        <li><span class="oil-tag">松紅梅 <span class="oil-latin">(Leptospermum scoparium)</span></span></li>
+                        <li><span class="oil-name">西印度月桂 Bay</span> <span class="latin-oil">(Pimenta racemosa)</span></li>
+                        <li><span class="oil-name">丁香 Clove</span> <span class="latin-oil">(Eugenia caryophyllata)</span></li>
+                        <li><span class="oil-name">尤加利 Eucalyptus</span> <span class="latin-oil">(Eucalyptus staigeriana, dives, smithii, globulus, radiata, citriodora)</span></li>
+                        <li><span class="oil-name">綠花白千層 Niaouli</span> <span class="latin-oil">(Melaleuca viridiflora)</span></li>
+                        <li><span class="oil-name">香桃木 Myrtle</span> <span class="latin-oil">(Myrtus communis)</span></li>
+                        <li><span class="oil-name">茶樹 Tea tree</span> <span class="latin-oil">(Melaleuca alternifolia)</span></li>
+                        <li><span class="oil-name">松紅梅 Manuka</span> <span class="latin-oil">(Leptospermum scoparium)</span></li>
                     </ul>`,
-                    func: `<ul><li>高度殺菌、抗病毒</li><li>滋補及刺激激勵</li><li>呼吸系統、黏液溶解</li><li>有助支氣管擴張</li><li>*含高量氧化物及醛類，可能引起皮膚刺激</li><li>適用於肌肉及關節痛症</li></ul>`
+                    func: `<ul><li>高度殺菌</li><li>抗病毒</li><li>滋補及刺激激勵</li><li>呼吸系統</li><li>黏液溶解</li><li>有助支氣管擴張</li><li>*由於含有高量的氧化物及醛類，可能會引起皮膚刺激</li><li>適用於肌肉及關節痛症</li></ul>`
                 },
                 {
                     cn: "木犀科",
                     latin: "Oleaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">茉莉 <span class="oil-latin">(Jasminum sambac)</span></span></li>
-                        <li><span class="oil-tag">桂花 <span class="oil-latin">(Osmanthus fragrans)</span></span></li>
+                        <li><span class="oil-name">茉莉 Jasmine</span> <span class="latin-oil">(Jasminum sambac / Jasminum officinale var. Grandiflorum / Jasminum auriculatum)</span></li>
+                        <li><span class="oil-name">桂花 Osmanthus</span> <span class="latin-oil">(Osmanthus fragrans)</span></li>
                     </ul>`,
                     func: `<ul><li>抗憂鬱</li><li>抗紅腫發炎</li><li>驅風</li><li>鎮靜</li></ul>`
                 },
                 {
                     cn: "松科",
-                    latin: "Pinaceae",
+                    latin: "Pinaceae / Abietaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">大西洋雪松 <span class="oil-latin">(Cedrus atlantica)</span></span></li>
-                        <li><span class="oil-tag">歐洲赤松 <span class="oil-latin">(Pinus sylvestris)</span></span></li>
-                        <li><span class="oil-tag">膠冷杉 <span class="oil-latin">(Abies balsamea)</span></span></li>
-                        <li><span class="oil-tag">黑雲杉 <span class="oil-latin">(Picea mariana)</span></span></li>
+                        <li><span class="oil-name">大西洋雪松 Cedarwood Atlas</span> <span class="latin-oil">(Cedrus atlantica)</span></li>
+                        <li><span class="oil-name">歐洲赤松 Pine</span> <span class="latin-oil">(Pinus sylvestris)</span></li>
+                        <li><span class="oil-name">膠冷杉 Fir (Balsam Fir)</span> <span class="latin-oil">(Abies balsamea)</span></li>
+                        <li><span class="oil-name">雲杉 Spruce</span> (例如: <span class="oil-name">黑雲杉 Black Spruce</span> <span class="latin-oil">Picea mariana</span>)</li>
                     </ul>`,
                     func: `<ul><li>高度殺菌</li><li>黏膜炎</li><li>提升腎上腺素</li><li>緩和呼吸道發炎</li><li>處理關節炎</li></ul>`
                 },
                 {
                     cn: "胡椒科",
                     latin: "Piperaceae",
-                    oils: `<ul><li><span class="oil-tag">黑胡椒 <span class="oil-latin">(Piper nigrum)</span></span></li></ul>`,
+                    oils: `<ul><li><span class="oil-name">黑胡椒 Black Pepper</span> <span class="latin-oil">(Piper nigrum)</span></li></ul>`,
                     func: `<ul><li>抗黏膜炎</li><li>循環系統及消化系統的刺激劑</li><li>止痛</li><li>化痰</li></ul>`
                 },
                 {
                     cn: "禾本科",
-                    latin: "Poaceae",
+                    latin: "Poaceae / Gramineae",
                     oils: `<ul>
-                        <li><span class="oil-tag">香茅 <span class="oil-latin">(Cymbopogon nardus)</span></span></li>
-                        <li><span class="oil-tag">檸檬香茅 <span class="oil-latin">(Cymbopogon citratus)</span></span></li>
-                        <li><span class="oil-tag">玫瑰草 <span class="oil-latin">(Cymbopogon martini)</span></span></li>
-                        <li><span class="oil-tag">岩蘭草 <span class="oil-latin">(Vetiveria zizanioides)</span></span></li>
+                        <li><span class="oil-name">香茅 Citronella</span> <span class="latin-oil">(Cymbopogon nardus)</span></li>
+                        <li><span class="oil-name">檸檬香茅 Lemongrass</span> <span class="latin-oil">(Cymbopogon citratus)</span></li>
+                        <li><span class="oil-name">玫瑰草 Palmarosa</span> <span class="latin-oil">(Cymbopogon martini)</span></li>
+                        <li><span class="oil-name">岩蘭草 Vetiver</span> <span class="latin-oil">(Vetiveria zizanioides)</span></li>
                     </ul>`,
                     func: `<ul><li>痤瘡</li><li>疼痛及痛楚</li><li>促進血液循環</li><li>循環系統的刺激劑</li></ul>`
                 },
@@ -446,21 +470,25 @@
                     cn: "薔薇科",
                     latin: "Rosaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">大馬士革玫瑰 <span class="oil-latin">(Rosa damascena)</span></span></li>
-                        <li><span class="oil-tag">白玫瑰 <span class="oil-latin">(Rosa alba)</span></span></li>
+                        <li><span class="oil-name">大馬士革玫瑰 Rose</span> <span class="latin-oil">(Rosa damascena)</span></li>
+                        <li><span class="oil-name">白玫瑰 Rose Blossom white</span> <span class="latin-oil">(Rosa alba)</span></li>
+                        <li><span class="oil-name">香精玫瑰 Rose</span> <span class="latin-oil">(Rosa centifolia)</span></li>
                     </ul>`,
-                    func: `<ul><li>殺菌、抗病毒</li><li>抗紅腫發炎、抗真菌</li><li>平衡荷爾蒙</li><li>對皮膚有益</li></ul>`
+                    func: `<ul><li>殺菌</li><li>抗病毒</li><li>抗紅腫發炎</li><li>抗真菌</li><li>平衡荷爾蒙</li><li>對皮膚有益</li></ul>`
                 },
                 {
                     cn: "芸香科",
                     latin: "Rutaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">佛手柑 <span class="oil-latin">(Citrus bergamia)</span></span></li>
-                        <li><span class="oil-tag">葡萄柚 <span class="oil-latin">(Citrus paradisi)</span></span></li>
-                        <li><span class="oil-tag">檸檬 <span class="oil-latin">(Citrus limonum)</span></span></li>
-                        <li><span class="oil-tag">甜橙 <span class="oil-latin">(Citrus sinensis)</span></span></li>
-                        <li><span class="oil-tag">橙花 <span class="oil-latin">(Citrus aurantium)</span></span></li>
-                        <li><span class="oil-tag">古龍葉 <span class="oil-latin">(Petitgrain)</span></span></li>
+                        <li><span class="oil-name">佛手柑 Bergamot</span> <span class="latin-oil">(Citrus bergamia)</span></li>
+                        <li><span class="oil-name">葡萄柚 Grapefruit</span> <span class="latin-oil">(Citrus paradisi)</span></li>
+                        <li><span class="oil-name">檸檬 Lemon</span> <span class="latin-oil">(Citrus limonum)</span></li>
+                        <li><span class="oil-name">紅橘 Mandarin</span> <span class="latin-oil">(Citrus reticulata)</span></li>
+                        <li><span class="oil-name">橙花 Neroli</span> <span class="latin-oil">(Citrus aurantium var. amara)</span></li>
+                        <li><span class="oil-name">苦橙 Orange bitter</span> <span class="latin-oil">(Citrus aurantium var. amara)</span></li>
+                        <li><span class="oil-name">甜橙 Orange sweet</span> <span class="latin-oil">(Citrus sinensis)</span></li>
+                        <li><span class="oil-name">古龍葉 Petitgrain</span> <span class="latin-oil">(Citrus aurantium var. amara)</span></li>
+                        <li><span class="oil-name">阿米香樹/西印度檀香 Amyris</span> <span class="latin-oil">(Amyris balsamifera)</span></li>
                     </ul>`,
                     func: `<ul><li>對消化系統有平衡及刺激作用</li><li>殺菌</li><li>鎮靜神經</li><li>精神大振</li><li>抗病毒</li></ul>`
                 },
@@ -468,34 +496,36 @@
                     cn: "檀香科",
                     latin: "Santalaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">檀香 <span class="oil-latin">(Santalum album)</span></span></li>
-                        <li><span class="oil-tag">澳洲檀香 <span class="oil-latin">(Santalum spicatum)</span></span></li>
+                        <li><span class="oil-name">檀香/東印度檀香 Sandalwood</span> <span class="latin-oil">(Santalum album)</span></li>
+                        <li><span class="oil-name">澳洲檀香 Sandalwood, Australia</span> <span class="latin-oil">(Santalum spicatum)</span></li>
                     </ul>`,
-                    func: `<ul><li>平衡神經系統</li><li>呼吸系統及排泄系統</li><li>乾燥皮膚</li><li>調節賀爾蒙</li></ul>`
+                    func: `<ul><li>平衡神經系統</li><li>呼吸系統及排泄系統</li><li>乾燥皮膚</li><li>用溶劑式提煉</li><li>調節賀爾蒙</li></ul>`
                 },
                 {
                     cn: "安息香科",
-                    latin: "Styracaceae",
-                    oils: `<ul><li><span class="oil-tag">安息香 <span class="oil-latin">(Styrax benzoin)</span></span></li></ul>`,
+                    latin: "Styracaceae / Styrax",
+                    oils: `<ul><li><span class="oil-name">安息香 Benzoin</span> <span class="latin-oil">(Styrax benzoin)</span></li></ul>`,
                     func: `<ul><li>抗黏膜炎</li><li>化痰</li><li>皮膚治療</li><li>關節痛楚</li><li>循環不佳</li></ul>`
                 },
                 {
                     cn: "繖形科",
                     latin: "Umbelliferae / Apiaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">歐白芷 <span class="oil-latin">(Angelica archangelica)</span></span></li>
-                        <li><span class="oil-tag">胡蘿蔔籽 <span class="oil-latin">(Daucus carota)</span></span></li>
-                        <li><span class="oil-tag">甜茴香 <span class="oil-latin">(Foeniculum vulgare)</span></span></li>
-                        <li><span class="oil-tag">芹菜籽 <span class="oil-latin">(Apium graveolens)</span></span></li>
+                        <li><span class="oil-name">歐白芷 Angelica</span> <span class="latin-oil">(Angelica archangelica)</span></li>
+                        <li><span class="oil-name">胡蘿蔔籽 Carrot Seed</span> <span class="latin-oil">(Daucus carota)</span></li>
+                        <li><span class="oil-name">甜茴香 Fennel Sweet</span> <span class="latin-oil">(Foeniculum vulgare)</span></li>
+                        <li><span class="oil-name">歐芹 Parsley</span> <span class="latin-oil">(Petroselinum crispum)</span></li>
+                        <li><span class="oil-name">芹菜籽 Celery Seed</span> <span class="latin-oil">(Apium graveolens)</span></li>
                     </ul>`,
-                    func: `<ul><li>幫助消化、分解脂肪</li><li>刺激膽汁流動、暖身</li><li>驅風、抗細菌、殺菌</li><li>治痙攣、抗紅腫發炎</li><li>通經、滋補劑</li></ul>`
+                    func: `<ul><li>幫助消化</li><li>分解脂肪</li><li>刺激膽汁流動</li><li>暖身</li><li>刺激</li><li>驅風</li><li>抗細菌</li><li>殺菌</li><li>治痙攣</li><li>抗紅腫發炎</li><li>通經</li><li>滋補劑</li></ul>`
                 },
                 {
                     cn: "敗醬草科",
                     latin: "Valerianaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">穗甘松 <span class="oil-latin">(Nardostachys jatamansi)</span></span></li>
-                        <li><span class="oil-tag">纈草 <span class="oil-latin">(Valeriana officinalis)</span></span></li>
+                        <li><span class="oil-name">穗甘松 Spikenard</span> <span class="latin-oil">(Nardostachys jatamansi)</span></li>
+                        <li><span class="oil-name">纈草 Valerian</span> <span class="latin-oil">(Valeriana officinalis)</span></li>
+                        <li><span class="oil-name">印度纈草 Valerian (Tagar)</span> <span class="latin-oil">(Valeriana wallichi)</span></li>
                     </ul>`,
                     func: `<ul><li>對神經系統有安神作用</li><li>治療神經痛症</li></ul>`
                 },
@@ -503,8 +533,8 @@
                     cn: "薑科",
                     latin: "Zingiberaceae",
                     oils: `<ul>
-                        <li><span class="oil-tag">小荳蔻 <span class="oil-latin">(Elettaria cardamomum)</span></span></li>
-                        <li><span class="oil-tag">薑 <span class="oil-latin">(Zingiber officinale)</span></span></li>
+                        <li><span class="oil-name">小荳蔻 Cardamom</span> <span class="latin-oil">(Elettaria cardamomum)</span></li>
+                        <li><span class="oil-name">薑 Ginger</span> <span class="latin-oil">(Zingiber officinale)</span></li>
                     </ul>`,
                     func: `<ul><li>消化系統滋補劑</li><li>抗黏膜炎</li><li>對肌肉系統有和暖作用</li><li>止痛，尤其是牙痛</li></ul>`
                 }
